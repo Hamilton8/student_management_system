@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Report Card')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<div class="container py-4" style="max-width: 800px;">
+    <div class="mb-3 no-print d-flex gap-2">
+        <a class="btn btn-outline-secondary" th:href="@{/students}">&larr; Students</a>
+        <button class="btn btn-primary" onclick="window.print()">Print</button>
+    </div>
+
+    <div class="report-card">
+        <h3 class="text-center mb-1">Student Report Card</h3>
+        <p class="text-center text-muted">Pass mark: <span th:text="${#numbers.formatDecimal(passPercent,1,0)}">40</span>% per subject</p>
+        <hr>
+        <div class="row mb-3">
+            <div class="col-6"><strong>Name:</strong> <span th:text="${report.student.fullName}"></span></div>
+            <div class="col-6"><strong>Roll No:</strong> <span th:text="${report.student.rollNumber}"></span></div>
+            <div class="col-6"><strong>Course:</strong> <span th:text="${report.student.course}"></span></div>
+            <div class="col-6"><strong>Email:</strong> <span th:text="${report.student.email}"></span></div>
+        </div>
+
+        <table class="table table-bordered">
+            <thead><tr><th>Code</th><th>Subject</th><th class="text-end">Max</th><th class="text-end">Obtained</th><th class="text-center">Status</th></tr></thead>
+            <tbody>
+            <tr th:each="r : ${report.results}">
+                <td th:text="${r.subjectCode}"></td>
+                <td th:text="${r.subjectName}"></td>
+                <td class="text-end" th:text="${r.maxMarks}"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(r.marksObtained,1,2)}"></td>
+                <td class="text-center">
+                    <span class="badge" th:classappend="${r.passed} ? 'text-bg-success' : 'text-bg-danger'"
+                          th:text="${r.passed} ? 'Pass' : 'Fail'"></span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(report.results)}"><td colspan="5" class="text-center text-muted">No marks entered yet.</td></tr>
+            </tbody>
+            <tfoot>
+            <tr class="fw-bold">
+                <td colspan="2" class="text-end">Total</td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(report.maxTotal,1,2)}"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(report.total,1,2)}"></td>
+                <td></td>
+            </tr>
+            </tfoot>
+        </table>
+
+        <div class="row text-center mt-4">
+            <div class="col-4"><div class="text-muted">Percentage</div>
+                <div class="fs-4 fw-bold"><span th:text="${#numbers.formatDecimal(report.percentage,1,2)}">0</span>%</div></div>
+            <div class="col-4"><div class="text-muted">Grade</div>
+                <div class="fs-4 fw-bold" th:text="${report.grade}">-</div></div>
+            <div class="col-4"><div class="text-muted">Result</div>
+                <div class="fs-4 fw-bold" th:classappend="${report.result == 'PASS'} ? 'text-success' : 'text-danger'"
+                     th:text="${report.result}">-</div></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

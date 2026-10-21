@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<div class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h2 class="mb-4">Dashboard</h2>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4"><div class="card stat-card text-center p-3">
+            <div class="display-5" th:text="${studentCount}">0</div><div class="text-muted">Students</div>
+            <a class="stretched-link" th:href="@{/students}"></a></div></div>
+        <div class="col-md-4"><div class="card stat-card text-center p-3">
+            <div class="display-5" th:text="${subjectCount}">0</div><div class="text-muted">Subjects</div>
+            <a class="stretched-link" th:href="@{/subjects}"></a></div></div>
+        <div class="col-md-4"><div class="card stat-card text-center p-3">
+            <div class="display-5" th:text="${markCount}">0</div><div class="text-muted">Marks recorded</div>
+            <a class="stretched-link" th:href="@{/marks}"></a></div></div>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-primary" th:href="@{/students/new}">+ Add Student</a>
+        <a class="btn btn-outline-primary" th:href="@{/marks}">Enter Marks</a>
+        <a class="btn btn-outline-secondary" th:href="@{/reports/class}">Class Report</a>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

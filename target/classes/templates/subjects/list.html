@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Subjects')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<div class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h2 class="mb-3">Subjects</h2>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <form th:action="@{/subjects/save}" th:object="${subject}" method="post" class="card card-body shadow-sm" novalidate>
+                <h5 th:text="${subject.id == null} ? 'Add Subject' : 'Edit Subject'">Add Subject</h5>
+                <input type="hidden" th:field="*{id}">
+                <div class="mb-3">
+                    <label class="form-label">Code</label>
+                    <input class="form-control" th:field="*{code}" th:errorclass="is-invalid">
+                    <div class="invalid-feedback" th:errors="*{code}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input class="form-control" th:field="*{name}" th:errorclass="is-invalid">
+                    <div class="invalid-feedback" th:errors="*{name}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Maximum Marks</label>
+                    <input type="number" class="form-control" th:field="*{maxMarks}" th:errorclass="is-invalid">
+                    <div class="invalid-feedback" th:errors="*{maxMarks}"></div>
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/subjects}">Clear</a>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-8">
+            <div class="table-responsive bg-white shadow-sm rounded">
+                <table class="table table-hover align-middle mb-0">
+                    <thead><tr><th>Code</th><th>Name</th><th>Max Marks</th><th class="text-end">Actions</th></tr></thead>
+                    <tbody>
+                    <tr th:each="s : ${subjects}">
+                        <td th:text="${s.code}"></td>
+                        <td th:text="${s.name}"></td>
+                        <td th:text="${s.maxMarks}"></td>
+                        <td class="text-end text-nowrap">
+                            <a class="btn btn-sm btn-outline-primary" th:href="@{/subjects/edit/{id}(id=${s.id})}">Edit</a>
+                            <form class="d-inline" th:action="@{/subjects/{id}/delete(id=${s.id})}" method="post"
+                                  onsubmit="return confirm('Delete this subject?');">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(subjects)}"><td colspan="4" class="text-center text-muted py-4">No subjects yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

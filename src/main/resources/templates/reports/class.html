@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Class Report')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Class Performance Report</h2>
+        <div class="no-print d-flex gap-2">
+            <a class="btn btn-outline-success" th:href="@{/reports/class/export(course=${course})}">Export CSV</a>
+            <button class="btn btn-primary" onclick="window.print()">Print</button>
+        </div>
+    </div>
+
+    <form class="row g-2 mb-3 no-print" th:action="@{/reports/class}" method="get">
+        <div class="col-md-4">
+            <select name="course" class="form-select" onchange="this.form.submit()">
+                <option value="">All courses</option>
+                <option th:each="c : ${courses}" th:value="${c}" th:text="${c}" th:selected="${c == course}"></option>
+            </select>
+        </div>
+    </form>
+
+    <div class="table-responsive bg-white shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+            <tr><th>Rank</th><th>Roll No</th><th>Name</th><th>Course</th>
+                <th class="text-end">Total</th><th class="text-end">%</th><th class="text-center">Grade</th><th class="text-center">Result</th>
+                <th class="no-print"></th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="r : ${reports}">
+                <td th:text="${r.rank}"></td>
+                <td th:text="${r.student.rollNumber}"></td>
+                <td th:text="${r.student.fullName}"></td>
+                <td th:text="${r.student.course}"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(r.total,1,2) + ' / ' + #numbers.formatDecimal(r.maxTotal,1,0)}"></td>
+                <td class="text-end" th:text="${#numbers.formatDecimal(r.percentage,1,2)}"></td>
+                <td class="text-center" th:text="${r.grade}"></td>
+                <td class="text-center">
+                    <span class="badge" th:classappend="${r.result == 'PASS'} ? 'text-bg-success' : 'text-bg-danger'" th:text="${r.result}"></span>
+                </td>
+                <td class="no-print text-end">
+                    <a class="btn btn-sm btn-outline-primary" th:href="@{/reports/student/{id}(id=${r.student.id})}">Report card</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(reports)}"><td colspan="9" class="text-center text-muted py-4">No marks recorded yet.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

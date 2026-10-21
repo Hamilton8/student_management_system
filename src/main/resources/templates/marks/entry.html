@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Marks Entry')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<div class="container py-4">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h2 class="mb-3">Marks Entry</h2>
+
+    <!-- Step 1: choose student -->
+    <form th:action="@{/marks}" method="get" class="card card-body shadow-sm mb-4">
+        <label class="form-label fw-semibold">Student</label>
+        <div class="d-flex gap-2">
+            <select name="studentId" class="form-select" onchange="this.form.submit()">
+                <option value="">-- Select a student --</option>
+                <option th:each="s : ${students}" th:value="${s.id}"
+                        th:text="${s.rollNumber + ' - ' + s.fullName}"
+                        th:selected="${selected != null and selected.id == s.id}"></option>
+            </select>
+            <noscript><button class="btn btn-secondary" type="submit">Go</button></noscript>
+        </div>
+    </form>
+
+    <div th:if="${selected != null}">
+        <div class="row g-4">
+            <!-- Step 2: enter / update marks -->
+            <div class="col-lg-4">
+                <form th:action="@{/marks/save}" th:object="${markForm}" method="post" class="card card-body shadow-sm" novalidate>
+                    <h5>Enter / Update Marks</h5>
+                    <p class="text-muted small mb-3" th:text="${selected.fullName + ' (' + selected.rollNumber + ')'}"></p>
+                    <input type="hidden" name="studentId" th:value="${selected.id}">
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <select class="form-select" th:field="*{subjectId}" th:errorclass="is-invalid">
+                            <option value="">-- Select subject --</option>
+                            <option th:each="sub : ${subjects}" th:value="${sub.id}"
+                                    th:text="${sub.code + ' - ' + sub.name + ' (max ' + sub.maxMarks + ')'}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{subjectId}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Marks Obtained</label>
+                        <input type="number" step="0.01" min="0" class="form-control" th:field="*{marksObtained}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{marksObtained}"></div>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Save Marks</button>
+                </form>
+            </div>
+
+            <!-- Existing marks -->
+            <div class="col-lg-8">
+                <div class="table-responsive bg-white shadow-sm rounded">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead><tr><th>Subject</th><th>Marks</th><th>Out of</th><th class="text-end">Actions</th></tr></thead>
+                        <tbody>
+                        <tr th:each="m : ${marks}">
+                            <td th:text="${m.subject.code + ' - ' + m.subject.name}"></td>
+                            <td th:text="${m.marksObtained}"></td>
+                            <td th:text="${m.subject.maxMarks}"></td>
+                            <td class="text-end text-nowrap">
+                                <a class="btn btn-sm btn-outline-primary"
+                                   th:href="@{/marks(studentId=${selected.id}, subjectId=${m.subject.id})}">Edit</a>
+                                <form class="d-inline" th:action="@{/marks/{id}/delete(id=${m.id})}" method="post"
+                                      onsubmit="return confirm('Remove this mark?');">
+                                    <input type="hidden" name="studentId" th:value="${selected.id}">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(marks)}"><td colspan="4" class="text-center text-muted py-4">No marks entered yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <a class="btn btn-outline-success mt-3" th:href="@{/reports/student/{id}(id=${selected.id})}">View Report Card</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

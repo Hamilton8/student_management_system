@@ -1,0 +1,10 @@
+body { background: #f5f7fa; }
+.stat-card { border: 0; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+.stat-card .display-5 { font-weight: 700; }
+.table thead th { background: #212529; color: #fff; }
+.report-card { background: #fff; border: 2px solid #212529; padding: 2rem; }
+@media print {
+    .no-print { display: none !important; }
+    body { background: #fff; }
+    .report-card { border: 1px solid #000; }
+}
